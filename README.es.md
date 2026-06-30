@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/readme/banner-es.png" alt="Generador de Favicons Aquidauana" width="100%">
+</p>
+
 # Generador de Favicons Aquidauana
 
 Proyecto simple para generar favicons en SVG y PNG con elementos inspirados en la identidad visual de Aquidauana.
@@ -14,22 +18,27 @@ Este proyecto usa HTML, CSS y JavaScript puro. Los archivos están separados con
 
 ```text
 .
-├── index.html
-├── src/
-│   ├── css/
-│   │   └── style.css
-│   ├── data/
-│   │   └── access.json
-│   └── js/
-│       ├── model.js
-│       ├── view.js
-│       ├── controller.js
-│       └── counter.js
-├── README.md
-├── README.en.md
-├── README.es.md
-├── CONTRIBUTING.md
-└── LICENSE
+|-- assets/
+|   `-- readme/
+|       |-- banner-pt.png
+|       |-- banner-en.png
+|       `-- banner-es.png
+|-- index.html
+|-- src/
+|   |-- css/
+|   |   `-- style.css
+|   |-- data/
+|   |   `-- access.json
+|   `-- js/
+|       |-- model.js
+|       |-- view.js
+|       |-- controller.js
+|       `-- counter.js
+|-- README.md
+|-- README.en.md
+|-- README.es.md
+|-- CONTRIBUTING.md
+`-- LICENSE
 ```
 
 ## Cómo abrir
