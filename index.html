@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Favicons - Aquidauana</title>
+    <!-- Tailwind CSS para Estilização Moderna -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome para Ícones de Interface -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar para uma interface mais polida */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #020617;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
+        /* Transição suave para abas */
+        .tab-content {
+            transition: opacity 0.2s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col justify-between">
+
+    <!-- Cabeçalho Principal -->
+    <header class="border-b border-slate-800 bg-slate-950/50 backdrop-blur py-4 px-6 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-blue-600 rounded-lg text-white shadow-lg shadow-blue-500/20 animate-pulse">
+                    <i class="fa-solid fa-shapes text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight">Aquidauana</h1>
+                    <p class="text-xs text-slate-400">Estúdio de Vetorização de Ícones Municipais</p>
+                </div>
+            </div>
+            
+            <!-- Abas de Navegação -->
+            <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-800">
+                <button onclick="switchTab('generator')" id="tab-btn-generator" class="px-4 py-2 text-xs font-semibold rounded-lg transition-all bg-blue-600 text-white">
+                    <i class="fa-solid fa-sliders mr-1.5"></i>Gerador de Favicon
+                </button>
+                <button onclick="switchTab('mural')" id="tab-btn-mural" class="px-4 py-2 text-xs font-semibold rounded-lg transition-all text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-circle-nodes mr-1.5"></i>Mural da Identidade
+                </button>
+            </div>
+
+            <div class="text-xs bg-slate-800 px-3 py-1.5 rounded-full text-slate-300 border border-slate-700 flex items-center gap-2">
+                <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+                <span>14 Elementos Identificados na Imagem</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal (Aba Gerador) -->
+    <main id="tab-generator" class="tab-content max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 w-full">
+        
+        <!-- Painel de Controlo (Esquerda) -->
+        <section class="lg:col-span-6 bg-slate-950 p-6 rounded-2xl border border-slate-800 flex flex-col gap-6 max-h-[80vh] overflow-y-auto">
+            <div>
+                <h2 class="text-lg font-semibold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-shapes text-blue-500"></i> 1. Selecionar Elemento da Identidade
+                </h2>
+                <p class="text-xs text-slate-400 mt-1">Navegue pelas silhuetas extraídas e tratadas diretamente do cabeçalho da marca de Aquidauana.</p>
+            </div>
+
+            <!-- Seletores de Ícone (Grelha de 2 Colunas para caber os 14 itens de forma limpa) -->
+            <div class="grid grid-cols-2 gap-3" id="icon-grid">
+                <!-- Injetado dinamicamente via JS com design responsivo -->
+            </div>
+
+            <hr class="border-slate-800">
+
+            <!-- Personalização de Fundo -->
+            <div>
+                <h2 class="text-lg font-semibold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-blue-500"></i> 2. Estilizar a Moldura
+                </h2>
+                <p class="text-xs text-slate-400 mt-1">Configure o fundo para contraste nos navegadores.</p>
+            </div>
+
+            <div class="flex flex-col gap-4">
+                <!-- Tipo de Moldura -->
+                <div>
+                    <label class="text-xs font-semibold text-slate-300 block mb-2">Formato do Fundo</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="setShape('transparent')" id="btn-shape-transparent" class="shape-btn active py-2 px-3 rounded-lg border border-blue-500 bg-blue-950/20 text-xs font-medium text-blue-400 transition-all">
+                            Transparente
+                        </button>
+                        <button onclick="setShape('rounded')" id="btn-shape-rounded" class="shape-btn py-2 px-3 rounded-lg border border-slate-800 bg-slate-900/40 text-xs font-medium text-slate-400 transition-all">
+                            Arredondado
+                        </button>
+                        <button onclick="setShape('circle')" id="btn-shape-circle" class="shape-btn py-2 px-3 rounded-lg border border-slate-800 bg-slate-900/40 text-xs font-medium text-slate-400 transition-all">
+                            Círculo
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Cor do Fundo (Sólido) -->
+                <div id="bgColorSection" class="hidden">
+                    <label class="text-xs font-semibold text-slate-300 block mb-2">Cor de Fundo da Moldura</label>
+                    <div class="flex items-center gap-3 bg-slate-900 p-3 rounded-xl border border-slate-800">
+                        <input type="color" id="bgColorInput" value="#1e293b" oninput="updateBgColor(this.value)" class="w-10 h-10 rounded-lg border border-slate-700 bg-transparent cursor-pointer">
+                        <span id="bgColorText" class="text-xs font-mono text-slate-300">#1e293b</span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Visualização e Exportação (Direita) -->
+        <section class="lg:col-span-6 flex flex-col gap-6">
+            
+            <!-- Janela de Pré-visualização -->
+            <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 flex flex-col gap-6">
+                <div>
+                    <h2 class="text-lg font-semibold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-eye text-blue-500"></i> Simulador de Ambiente Real
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-1">Certifique-se de que o ícone permanece legível e contrastado em abas reais.</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Simulador de Separador Claro -->
+                    <div class="bg-slate-100 rounded-xl p-4 text-slate-800 border border-slate-200">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Tema Claro (Chrome/Safari)</span>
+                        <div class="flex items-center gap-2 bg-white px-3 py-2 rounded-lg border border-slate-200 shadow-sm">
+                            <div class="w-4 h-4 flex items-center justify-center relative overflow-hidden" id="preview-tab-light">
+                                <!-- Renderizado por JS -->
+                            </div>
+                            <span class="text-xs font-medium text-slate-700 truncate">Aquidauana - Portal Oficial</span>
+                            <i class="fa-solid fa-xmark text-[10px] text-slate-400 ml-auto"></i>
+                        </div>
+                    </div>
+
+                    <!-- Simulador de Separador Escuro -->
+                    <div class="bg-slate-900 rounded-xl p-4 text-slate-100 border border-slate-800">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-2">Tema Escuro (Chrome/Firefox)</span>
+                        <div class="flex items-center gap-2 bg-slate-950 px-3 py-2 rounded-lg border border-slate-800 shadow-sm">
+                            <div class="w-4 h-4 flex items-center justify-center relative overflow-hidden" id="preview-tab-dark">
+                                <!-- Renderizado por JS -->
+                            </div>
+                            <span class="text-xs font-medium text-slate-300 truncate">Aquidauana - Portal Oficial</span>
+                            <i class="fa-solid fa-xmark text-[10px] text-slate-600 ml-auto"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Painel de Canvas de Alta Resolução -->
+                <div class="flex flex-col items-center justify-center p-8 bg-slate-900 rounded-xl border border-slate-800 relative">
+                    <div class="absolute top-3 left-3 text-[10px] font-mono text-slate-500 uppercase">Geometria Vetorial Ampliada</div>
+                    <div class="w-44 h-44 flex items-center justify-center" id="main-vector-preview">
+                        <!-- Renderizado por JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bloco de Ações e Código -->
+            <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 flex flex-col gap-4">
+                <h3 class="text-md font-semibold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-download text-emerald-500"></i> Descarregar Assets de Produção
+                </h3>
+                
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <button onclick="downloadSVG()" class="flex flex-col items-center justify-center p-3 bg-emerald-600/10 border border-emerald-500/20 rounded-xl text-emerald-400 hover:bg-emerald-600/20 transition-all">
+                        <i class="fa-solid fa-file-code text-xl mb-1"></i>
+                        <span class="text-xs font-bold">Vetor .SVG</span>
+                        <span class="text-[9px] text-slate-400">Nativo/Responsivo</span>
+                    </button>
+
+                    <button onclick="downloadPNG(32)" class="flex flex-col items-center justify-center p-3 bg-slate-900 border border-slate-800 rounded-xl text-slate-300 hover:bg-slate-850 transition-all">
+                        <i class="fa-solid fa-image text-xl mb-1 text-blue-400"></i>
+                        <span class="text-xs font-bold">PNG 32x32</span>
+                        <span class="text-[9px] text-slate-400">Favicon Clássico</span>
+                    </button>
+
+                    <button onclick="downloadPNG(180)" class="flex flex-col items-center justify-center p-3 bg-slate-900 border border-slate-800 rounded-xl text-slate-300 hover:bg-slate-850 transition-all">
+                        <i class="fa-brands fa-apple text-xl mb-1 text-amber-500"></i>
+                        <span class="text-xs font-bold">PNG 180x180</span>
+                        <span class="text-[9px] text-slate-400">Apple Touch</span>
+                    </button>
+
+                    <button onclick="downloadPNG(512)" class="flex flex-col items-center justify-center p-3 bg-slate-900 border border-slate-800 rounded-xl text-slate-300 hover:bg-slate-850 transition-all">
+                        <i class="fa-solid fa-arrows-up-down-left-right text-xl mb-1 text-indigo-400"></i>
+                        <span class="text-xs font-bold">PNG 512x512</span>
+                        <span class="text-[9px] text-slate-400">PWA / Android</span>
+                    </button>
+                </div>
+
+                <div class="mt-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="text-xs font-semibold text-slate-300 block">HTML de Integração</label>
+                        <button onclick="copyHTMLCode()" class="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1">
+                            <i class="fa-solid fa-copy"></i> Copiar Código
+                        </button>
+                    </div>
+                    <pre class="bg-slate-900 p-3 rounded-lg border border-slate-800 text-xs font-mono text-emerald-400 overflow-x-auto whitespace-pre-wrap" id="html-code-block">
+&lt;!-- Favicon moderno em SVG (Leve e infinitamente escalável) --&gt;
+&lt;link rel="icon" type="image/svg+xml" href="favicon.svg"&gt;</pre>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Conteúdo da Aba Mural (Referência e Estampa Oficial) -->
+    <main id="tab-mural" class="tab-content hidden max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 flex-1 flex flex-col gap-8 w-full">
+        
+        <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 flex flex-col gap-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h2 class="text-xl font-semibold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-images text-blue-500"></i> Mural da Identidade Territorial
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-1">Abaixo está representada a estampa original oficial (<code class="text-blue-400 font-mono">marca-aquidauana-grande.png</code>). Use esta área para estudar a aplicação harmónica da marca.</p>
+                </div>
+                
+                <!-- Ferramentas do Visualizador de Imagem -->
+                <div class="flex items-center gap-2 bg-slate-900 p-1.5 rounded-xl border border-slate-800">
+                    <button onclick="adjustImageFilter('none')" class="px-3 py-1 text-[11px] font-medium rounded-lg bg-slate-850 hover:text-white transition-all text-slate-300">
+                        Original
+                    </button>
+                    <button onclick="adjustImageFilter('grayscale(100%)')" class="px-3 py-1 text-[11px] font-medium rounded-lg hover:bg-slate-800 hover:text-white transition-all text-slate-400">
+                        Escala de Cinza
+                    </button>
+                    <button onclick="adjustImageFilter('invert(90%)')" class="px-3 py-1 text-[11px] font-medium rounded-lg hover:bg-slate-800 hover:text-white transition-all text-slate-400">
+                        Esquema Invertido
+                    </button>
+                </div>
+            </div>
+
+            <!-- Container da Imagem com Lupa/Interatividade -->
+            <div class="bg-slate-900 rounded-xl border border-slate-800 p-4 flex justify-center items-center overflow-hidden min-h-[50vh] relative group">
+                <img 
+                    id="brand-master-pattern" 
+                    src="marca-aquidauana-grande.png" 
+                    alt="Estampa Territorial de Aquidauana" 
+                    class="max-w-full h-auto rounded-lg transition-all duration-300 select-none shadow-2xl"
+                    onerror="this.onerror=null; this.src='https://placehold.co/1200x800/1e293b/ffffff?text=Marca+Aquidauana+Grande+Mural';"
+                />
+                
+                <!-- Overlay informativo na imagem -->
+                <div class="absolute bottom-6 right-6 bg-slate-950/90 backdrop-blur-md px-3 py-2 rounded-lg border border-slate-700 text-[10px] font-medium text-slate-300 flex items-center gap-2 pointer-events-none">
+                    <i class="fa-solid fa-circle-info text-blue-400"></i>
+                    <span>Asset Original Mantido de Forma Íntegra</span>
+                </div>
+            </div>
+
+            <!-- Bloco de Legenda das Cores da Identidade -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 bg-slate-900/50 rounded-xl border border-slate-800/50">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-4 h-4 rounded-full bg-[#253573] border border-slate-700"></span>
+                    <div>
+                        <span class="text-xs font-semibold block text-white">Azul Primário</span>
+                        <span class="text-[9px] font-mono text-slate-500">#253573</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2.5">
+                    <span class="w-4 h-4 rounded-full bg-[#00a3e0] border border-slate-700"></span>
+                    <div>
+                        <span class="text-xs font-semibold block text-white">Azul Celeste</span>
+                        <span class="text-[9px] font-mono text-slate-500">#00a3e0</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2.5">
+                    <span class="w-4 h-4 rounded-full bg-[#f2c111] border border-slate-700"></span>
+                    <div>
+                        <span class="text-xs font-semibold block text-white">Amarelo Ouro</span>
+                        <span class="text-[9px] font-mono text-slate-500">#f2c111</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2.5">
+                    <span class="w-4 h-4 rounded-full bg-[#3ca35d] border border-slate-700"></span>
+                    <div>
+                        <span class="text-xs font-semibold block text-white">Verde Floresta</span>
+                        <span class="text-[9px] font-mono text-slate-500">#3ca35d</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="border-t border-slate-800 bg-slate-950 py-4 px-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+            <p>&copy; 2026 Aquidauana Tech. Extraído minuciosamente a partir da marca territorial original do município.</p>
+            <p class="flex items-center gap-1"><i class="fa-solid fa-heart text-red-500 animate-pulse"></i> Preservação Cultural Digital</p>
+        </div>
+    </footer>
+
+    <!-- Notificações Modais -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-emerald-600 text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none z-50">
+        <i class="fa-solid fa-circle-check text-lg"></i>
+        <span id="toast-message">Copiado para a área de transferência!</span>
+    </div>
+
+    <!-- Canvas Invisível para Exportação de Imagens PNG -->
+    <canvas id="exportCanvas" class="hidden"></canvas>
+
+    <!-- Lógica de Controlo e Geração de SVG Dinâmico -->
+    <script>
+        // Configuração de Cores Originais do Logótipo de Aquidauana
+        const BRAND_DARK_BLUE = '#253573';   // Azul primário (Escrita e traçados)
+        const BRAND_SKY_BLUE = '#00a3e0';    // Azul celeste
+        const BRAND_GOLD_YELLOW = '#f2c111'; // Amarelo sol/ouro
+        const BRAND_GREEN = '#3ca35d';       // Verde floresta/coqueiro
+        const BRAND_CYAN = '#00afec';        // Ciano das ondas do rio
+
+        // Estado da Aplicação
+        let currentIcon = 'A'; 
+        let currentShape = 'transparent'; 
+        let currentBgColor = '#1e293b';
+
+        // Dicionário com dados de todos os 14 ícones identificados no padrão
+        const ICONS_METADATA = [
+            { key: 'A', name: 'Letra "A" Oficial', desc: 'Com círculo azul celeste', category: 'Marca' },
+            { key: 'Q', name: 'Letra "q" Oficial', desc: 'Com círculo amarelo ouro', category: 'Marca' },
+            { key: 'church', name: 'Igreja Matriz', desc: 'História e espiritualidade', category: 'História' },
+            { key: 'fisherman', name: 'O Pescador', desc: 'Rio Aquidauana e as ondas', category: 'Turismo' },
+            { key: 'pot', name: 'Cerâmica Indígena', desc: 'Vaso com grafismos', category: 'Cultura' },
+            { key: 'kadiweu', name: 'Arte Kadiwéu', desc: 'Pintura corporal tradicional', category: 'Cultura' },
+            { key: 'cyclist', name: 'Cicloturismo', desc: 'Aventura nas serras', category: 'Turismo' },
+            { key: 'sun', name: 'O Sol Pantaneiro', desc: 'Calor e luz de Aquidauana', category: 'Natureza' },
+            { key: 'bridge', name: 'Ponte de Ferro', desc: 'Património arquitetónico', category: 'História' },
+            { key: 'anteater', name: 'Tamanduá-Bandeira', desc: 'Riqueza da fauna local', category: 'Natureza' },
+            { key: 'river', name: 'Curvas do Rio', desc: 'O curso de águas puras', category: 'Natureza' },
+            { key: 'arara', name: 'Arara Azul', desc: 'Símbolo dos céus do Pantanal', category: 'Natureza' },
+            { key: 'palm', name: 'Coqueiros', desc: 'Natureza exuberante', category: 'Natureza' },
+            { key: 'hat', name: 'Homem Pantaneiro', desc: 'Tradição do homem do campo', category: 'Cultura' }
+        ];
+
+        // Definição dos Vetores das Opções desenhados em viewport 512x512
+        const SVG_TEMPLATES = {
+            'A': (bg, shape, strokeColor) => {
+                const background = renderBackground(bg, shape);
+                return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+                    ${background}
+                    <g transform="translate(0, 0)">
+                        <path d="M305,140 C305,140 305,370 305,370 C305,385 315,395 330,395 C345,395 355,385 355,370 L355,140 C355,140 305,140 305,140 Z" fill="${strokeColor || BRAND_DARK_BLUE}" />
+                        <path d="M220,175 C145,175 85,235 85,310 C85,385 145,445 220,445 C270,445 310,415 330,370 L330,250 C310,205 270,175 220,175 Z" fill="${strokeColor || BRAND_DARK_BLUE}" />
+                        <circle cx="215" cy="310" r="72" fill="${BRAND_SKY_BLUE}" />
+                    </g>
+                </svg>`;
+            },
+            'Q': (bg, shape, strokeColor) => {
+                const background = renderBackground(bg, shape);
+                return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+                    ${background}
+                    <g transform="translate(0, 0)">
+                        <path d="M220,115 C145,115 85,175 85,250 C85,325 145,385 220,385 C270,385 310,355 330,310 L330,190 C310,145 270,115 220,115 Z" fill="${strokeColor || BRAND_DARK_BLUE}" />
+                        <circle cx="215" cy="250" r="72" fill="${BRAND_GOLD_YELLOW}" />
+                        <path d="M305,180 L305,410 C305,425 315,435 330,435 C345,435 355,425 355,410 L355,180 Z" fill="${strokeColor || BRAND_DARK_BLUE}" />
+                    </g>
+                </svg>`;
+            },
+            'church': (bg, shape, strokeColor) => {
+                const background = renderBackground(bg, shape);
+                return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+                    ${background}
+                    <g transform="translate(106, 60)" stroke="${strokeColor || BRAND_DARK_BLUE}" stroke-width="24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="20" y="100" width="60" height="260" rx="10" />
+                        <path d="M10,100 L50,10 L90,100 Z" />
+                        <path d="M50,10 L50,-15" />
+                        <path d="M35,-5 L65,-5" />
+                        <rect x="220" y="100" width="60" height="260" rx="10" />
+                        <path d="M210,100 L250,10 L290,100 Z" />
+                        <path d="M250,10 L250,-15" />
+                        <path d="M235,-5 L265,-5" />
+                        <path d="M80,180 L220,180 L220,360 L80,360 Z" />
+                        <path d="M80,180 L150,110 L220,180" />
+                        <circle cx="150" cy="220" r="25" fill="${BRAND_GOLD_YELLOW}" stroke="none" />
+                        <path d="M125,360 L125,300 C125,285 175,285 175,300 L175,360 Z" fill="${BRAND_SKY_BLUE}" stroke-width="16" />
+                    </g>
+                </svg>`;
+            },
+            'fisherman': (bg, shape, strokeColor) => {
+                const background = renderBackground(bg, shape);
+                return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+                    ${background}
+                    <g transform="translate(50, 50)" stroke="${strokeColor || BRAND_DARK_BLUE}" stroke-width="20" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="150" cy="130" r="30" fill="none" stroke-width="24" />
+                        <path d="M150,160 L150,230 M150,190 L100,210 M150,190 L210,210" />
+                        <path d="M210,210 L340,60" stroke="${BRAND_GOLD_YELLOW}" stroke-width="14" />
+                        <path d="M340,60 L340,310" stroke-width="10" stroke-dasharray="10,10" />
+                        <path d="M60,250 L260,250 L300,210 L20,210 Z" fill="${BRAND_SKY_BLUE}" stroke-width="16" />
+                        <path d="M20,310 C60,290 100,330 140,310 C180,290 220,330 260,310 C300,290 340,330 380,310" stroke="${BRAND_CYAN}" stroke-width="24" />
+                        <path d="M20,360 C60,340 100,380 140,360 C180,340 220,380 260,360 C300,340 340,380 380,360" stroke="${BRAND_CYAN}" stroke-width="16" />
+                    </g>
+                </svg>`;
+            },
+            'pot': (bg, shape, strokeColor) => {
+                const background = renderBackground(bg, shape);
+                return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+                    ${background}
+                    <g transform="translate(0, 0)" stroke="${strokeColor || BRAND_DARK_BLUE}" stroke-width="20" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M206,100 L306,100 C306,100 350,140 370,220 C390,300 340,412 256,412 C172,412 122,300 142,220 C162,140 206,100 206,100 Z" fill="none" stroke-width="24" />
+                        <path d="M190,130 L322,130" stroke-width="12" />
+                        <path d="M170,170 L342,170" stroke-width="12" />
+                        <circle cx="256" cy="270" r="24" fill="${BRAND_GOLD_YELLOW}" stroke="none" />
+                        <circle cx="216" cy="270" r="14" fill="${BRAND_SKY_BLUE}" stroke="none" />
+                        <circle cx="296" cy="270" r="14" fill="${BRAND_SKY_BLUE}" stroke="none" />
+                        <circle cx="256" cy="230" r="14" fill="${BRAND_SKY_BLUE}" stroke="none" />
+                        <circle cx="256" cy="310" r="14" fill="${BRAND_SKY_BLUE}" stroke="none" />
+                    </g>
+                </svg>`;
+            },
+            'kadiweu': (bg, shape, strokeColor) => {
+                const background = renderBackground(bg, shape);
+                return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+                    ${background}
+                    <g transform="translate(100, 80)" stroke="${strokeColor || BRAND_DARK_BLUE}" stroke-width="20" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="156" cy="50" r="30" stroke-width="26" />
+                        <path d="M156,80 L156,180" stroke-width="26" />
+                        <path d="M46,140 L116,140 C116,140 156,140 156,180" />
+                        <path d="M266,140 L196,140 C196,140 156,140 156,180" />
+                        <path d="M156,180 L106,260 L156,340 L206,260 Z" fill="${BRAND_GOLD_YELLOW}" stroke-width="16" />
+                        <path d="M156,220 L131,260 L156,300 L181,260 Z" fill="${BRAND_SKY_BLUE}" stroke="none" />
+                        <path d="M106,340 L86,400" stroke-width="24" />
+                        <path d="M206,340 L226,400" stroke-width="24" />
+                    </g>
+                </svg>`;
+            },
+            'cyclist': (bg, shape, strokeColor) => {
+                const background = renderBackground(bg, shape);
+                return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+                    ${background}
+                    <g transform="translate(50, 80)" stroke="${strokeColor || BRAND_DARK_BLUE}" stroke-width="18" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="100" cy="300" r="60" stroke-width="20" />
+                        <circle cx="312" cy="300" r="60" stroke-width="20" />
+                        <path d="M100,300 L180,300 L240,200 L140,200 L100,300 M180,300 L220,160 L312,300" />
+                        <path d="M220,160 L300,160 M280,120 L320,200" stroke-width="14" />
+                        <circle cx="210" cy="70" r="24" stroke-width="24" />
+                        <path d="M210,94 L170,160 L140,240 M170,160 L240,160 L290,170" stroke="${BRAND_GREEN}" stroke-width="22" />
+                        <path d="M10,360 L120,280 L230,360 L340,220 L420,360" stroke="${BRAND_GOLD_YELLOW}" stroke-width="14" />
+                    </g>
+                </svg>`;
+            },
+            'sun': (bg, shape, strokeColor) => {
+                const background = renderBackground(bg, shape);
+                return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+                    ${background}
+                    <g transform="translate(0, 0)">
+                        <circle cx="256" cy="256" r="100" fill="${BRAND_GOLD_YELLOW}" stroke="${strokeColor || BRAND_DARK_BLUE}" stroke-width="20" />
+                        <g stroke="${strokeColor || BRAND_DARK_BLUE}" stroke-width="18" stroke-linecap="round">
+                            <line x1="256" y1="100" x2="256" y2="50" />
+                            <line x1="256" y1="412" x2="256" y2="362" />
+                            <line x1="100" y1="256" x2="50" y2="256" />
+                            <line x1="412" y1="256" x2="362" y2="256" />
+                            <line x1="146" y1="146" x2="110" y2="110" />
+                            <line x1="366" y1="366" x2="402" y2="402" />
+                            <line x1="146" y1="366" x2="110" y2="402" />
+                            <line x1="366" y1="146" x2="402" y2="110" />
+                        </g>
+                    </g>
+                </svg>`;
+            },
+            'bridge': (bg, shape, strokeColor) => {
+                const background = renderBackground(bg, shape);
+                return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+                    ${background}
+                    <g transform="translate(0, 50)" stroke="${strokeColor || BRAND_DARK_BLUE}" stroke-width="16" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M60,300 C60,120 452,120 452,300" stroke-width="24" />
+                        <path d="M100,300 C100,160 412,160 412,300" stroke-width="12" />
+                        <line x1="30" y1="300" x2="482" y2="300" stroke-width="20" />
+                        <line x1="120" y1="230" x2="120" y2="300" />
+                        <line x1="180" y1="190" x2="180" y2="300" />
+                        <line x1="256" y1="175" x2="256" y2="300" stroke="${BRAND_GOLD_YELLOW}" stroke-width="20" />
+                        <line x1="332" y1="190" x2="332" y2="300" />
+                        <line x1="392" y1="230" x2="392" y2="300" />
+                        <line x1="120" y1="230" x2="180" y2="300" />
+                        <line x1="180" y1="190" x2="256" y2="300" />
+                        <line x1="332" y1="190" x2="256" y2="300" />
+                        <line x1="392" y1="230" x2="332" y2="300" />
+                    </g>
+                </svg>`;
+            },
+            'anteater': (bg, shape, strokeColor) => {
+                const background = renderBackground(bg, shape);
+                return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+                    ${background}
+                    <g transform="translate(50, 100)" stroke="${strokeColor || BRAND_DARK_BLUE}" stroke-width="18" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M300,220 C240,160 180,180 140,200 L60,200 L40,210 L60,220 L130,230" stroke-width="22" />
+                        <path d="M140,200 C180,140 280,120 340,180" stroke-width="22" />
+                        <path d="M340,180 C400,140 460,200 440,260 C400,300 320,280 300,220" fill="${BRAND_GOLD_YELLOW}" stroke-width="16" />
+                        <path d="M180,210 L160,300 L180,310" stroke-width="20" />
+                        <path d="M220,210 L210,290 L230,300" stroke-width="16" />
+                        <path d="M300,210 L310,300 M330,200 L340,290" />
+                    </g>
+                </svg>`;
+            },
+            'river': (bg, shape, strokeColor) => {
+                const background = renderBackground(bg, shape);
+                return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+                    ${background}
+                    <g transform="translate(0, 0)" stroke="${strokeColor || BRAND_DARK_BLUE}" stroke-width="24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M80,120 C180,80 100,220 256,180 C412,140 320,320 432,280" stroke="${BRAND_SKY_BLUE}" stroke-width="36" />
+                        <path d="M80,240 C180,200 100,340 256,300 C412,260 320,440 432,400" stroke="${BRAND_CYAN}" stroke-width="24" />
+                        <path d="M80,360 C180,320 100,460 256,420 C412,380 320,500 432,460" stroke-width="12" />
+                    </g>
+                </svg>`;
+            },
+            'arara': (bg, shape, strokeColor) => {
+                const background = renderBackground(bg, shape);
+                return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+                    ${background}
+                    <g transform="translate(50, 50)" stroke="${strokeColor || BRAND_DARK_BLUE}" stroke-width="16" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M260,100 C280,80 320,80 330,120 L310,140 Z" fill="${BRAND_SKY_BLUE}" stroke-width="18" />
+                        <circle cx="290" cy="110" r="4" fill="black" stroke="none" />
+                        <path d="M260,130 L100,80 C120,150 180,200 240,180 L260,130" fill="${BRAND_GOLD_YELLOW}" stroke-width="14" />
+                        <path d="M280,130 L412,220 C380,260 310,240 280,180 L280,130" fill="${BRAND_SKY_BLUE}" stroke-width="14" />
+                        <path d="M260,180 L220,380 L280,380 L280,180 Z" stroke="${BRAND_SKY_BLUE}" stroke-width="12" />
+                    </g>
+                </svg>`;
+            },
+            'palm': (bg, shape, strokeColor) => {
+                const background = renderBackground(bg, shape);
+                return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+                    ${background}
+                    <g transform="translate(80, 50)" stroke="${strokeColor || BRAND_DARK_BLUE}" stroke-width="20" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M120,400 Q150,280 180,180" stroke-width="24" />
+                        <path d="M240,400 Q220,300 240,220" stroke-width="16" />
+                        <g stroke="${BRAND_GREEN}" stroke-width="16">
+                            <path d="M180,180 C140,140 80,160 80,160" />
+                            <path d="M180,180 C160,120 120,100 120,100" />
+                            <path d="M180,180 C200,120 240,110 240,110" />
+                            <path d="M180,180 C220,150 260,170 260,170" />
+                            <path d="M180,180 C200,210 220,250 220,250" />
+                            <path d="M240,220 C210,180 180,200 180,200" />
+                            <path d="M240,220 C250,170 290,180 290,180" />
+                            <path d="M240,220 C270,240 300,260 300,260" />
+                        </g>
+                    </g>
+                </svg>`;
+            },
+            'hat': (bg, shape, strokeColor) => {
+                const background = renderBackground(bg, shape);
+                return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+                    ${background}
+                    <g transform="translate(0, 0)">
+                        <path d="M156,260 C156,150 200,100 256,100 C312,100 356,150 356,260 Z" fill="${BRAND_GOLD_YELLOW}" />
+                        <path d="M156,250 C190,270 322,270 356,250 L356,265 C322,285 190,285 156,265 Z" fill="${strokeColor || BRAND_DARK_BLUE}" />
+                        <path d="M70,270 C130,250 382,250 442,270 C465,278 465,292 442,300 C382,320 130,320 70,300 C47,292 47,278 70,270 Z" fill="${BRAND_GOLD_YELLOW}" />
+                    </g>
+                </svg>`;
+            }
+        };
+
+        // Função para Gerar a Tag de Fundo baseada no Formato selecionado
+        function renderBackground(bgColor, shape) {
+            if (shape === 'transparent') return '';
+            if (shape === 'rounded') {
+                return `<rect width="512" height="512" rx="96" fill="${bgColor}" />`;
+            }
+            if (shape === 'circle') {
+                return `<circle cx="256" cy="256" r="256" fill="${bgColor}" />`;
+            }
+            return '';
+        }
+
+        // Injetar dinamicamente a grelha de botões com os 14 elementos
+        function buildIconSelectorGrid() {
+            const grid = document.getElementById('icon-grid');
+            grid.innerHTML = '';
+            
+            ICONS_METADATA.forEach(icon => {
+                const isActive = icon.key === currentIcon;
+                const activeClasses = isActive ? 'border-blue-500 bg-blue-950/20 active' : 'border-slate-800 bg-slate-900/30';
+                
+                // Renderizar uma pequena pré-visualização vetorial estática (em cor contrastante para o botão)
+                const miniSvg = SVG_TEMPLATES[icon.key]('transparent', 'transparent', '#94a3b8');
+
+                grid.innerHTML += `
+                    <button onclick="selectIcon('${icon.key}')" id="btn-icon-${icon.key}" class="icon-selector-btn p-3 rounded-xl border-2 ${activeClasses} text-left transition-all duration-200 hover:border-slate-700 flex items-center gap-3">
+                        <div class="w-10 h-10 bg-slate-950 p-1.5 rounded-lg flex items-center justify-center shrink-0">
+                            ${miniSvg}
+                        </div>
+                        <div class="min-w-0">
+                            <span class="font-bold text-xs block text-white truncate">${icon.name}</span>
+                            <span class="text-[9px] text-slate-400 block truncate">${icon.category}</span>
+                        </div>
+                    </button>
+                `;
+            });
+        }
+
+        // Função de Navegação por Abas
+        function switchTab(tabId) {
+            // Esconde todos os conteúdos de abas
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            // Mostra a aba ativa
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            // Atualiza botões do cabeçalho
+            const genBtn = document.getElementById('tab-btn-generator');
+            const muralBtn = document.getElementById('tab-btn-mural');
+
+            if (tabId === 'generator') {
+                genBtn.className = "px-4 py-2 text-xs font-semibold rounded-lg transition-all bg-blue-600 text-white";
+                muralBtn.className = "px-4 py-2 text-xs font-semibold rounded-lg transition-all text-slate-400 hover:text-white";
+            } else {
+                genBtn.className = "px-4 py-2 text-xs font-semibold rounded-lg transition-all text-slate-400 hover:text-white";
+                muralBtn.className = "px-4 py-2 text-xs font-semibold rounded-lg transition-all bg-blue-600 text-white";
+            }
+        }
+
+        // Ajustar Filtros Visuais do Mural da Identidade
+        function adjustImageFilter(filterValue) {
+            document.getElementById('brand-master-pattern').style.filter = filterValue;
+            showNotification('Filtro do painel de marca atualizado!');
+        }
+
+        // Função de Atualização Global de Renderização
+        function renderAll() {
+            const currentSVGMarkup = SVG_TEMPLATES[currentIcon](currentBgColor, currentShape);
+            
+            // 1. Atualizar o painel central de visualização
+            document.getElementById('main-vector-preview').innerHTML = currentSVGMarkup;
+
+            // 2. Atualizar o mini browser tab claro
+            document.getElementById('preview-tab-light').innerHTML = currentSVGMarkup;
+
+            // 3. Atualizar o mini browser tab escuro
+            document.getElementById('preview-tab-dark').innerHTML = currentSVGMarkup;
+        }
+
+        // Interação: Mudar de Ícone Principal
+        function selectIcon(iconKey) {
+            currentIcon = iconKey;
+            
+            // Atualiza o estado visual das classes ativas dos botões
+            document.querySelectorAll('.icon-selector-btn').forEach(btn => {
+                btn.classList.remove('active', 'border-blue-500', 'bg-blue-950/20');
+                btn.classList.add('border-slate-800', 'bg-slate-900/30');
+            });
+
+            const activeBtn = document.getElementById(`btn-icon-${iconKey}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('border-slate-800', 'bg-slate-900/30');
+                activeBtn.classList.add('active', 'border-blue-500', 'bg-blue-950/20');
+            }
+
+            renderAll();
+        }
+
+        // Interação: Escolher Formato da Moldura de Fundo
+        function setShape(shapeKey) {
+            currentShape = shapeKey;
+
+            // Atualiza botões
+            document.querySelectorAll('.shape-btn').forEach(btn => {
+                btn.classList.remove('active', 'border-blue-500', 'bg-blue-950/20', 'text-blue-400');
+                btn.classList.add('border-slate-800', 'bg-slate-900/40', 'text-slate-400');
+            });
+
+            const activeBtn = document.getElementById(`btn-shape-${shapeKey}`);
+            activeBtn.classList.remove('border-slate-800', 'bg-slate-900/40', 'text-slate-400');
+            activeBtn.classList.add('active', 'border-blue-500', 'bg-blue-950/20', 'text-blue-400');
+
+            // Exibir ou ocultar personalização de cor
+            const bgSection = document.getElementById('bgColorSection');
+            if (shapeKey === 'transparent') {
+                bgSection.classList.add('hidden');
+            } else {
+                bgSection.classList.remove('hidden');
+            }
+
+            renderAll();
+        }
+
+        // Interação: Alterar Cor da Moldura de Fundo
+        function updateBgColor(colorHex) {
+            currentBgColor = colorHex;
+            document.getElementById('bgColorText').innerText = colorHex;
+            renderAll();
+        }
+
+        // Ação: Mostrar Alertas na Interface
+        function showNotification(message) {
+            const toast = document.getElementById('toast');
+            const msgSpan = document.getElementById('toast-message');
+            msgSpan.innerText = message;
+            
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Ação: Copiar Código HTML para Área de Transferência
+        function copyHTMLCode() {
+            const codeText = `<!-- Favicon moderno em formato SVG (Para todos os browsers modernos) -->
+<link rel="icon" type="image/svg+xml" href="favicon.svg">`;
+            
+            const tempInput = document.createElement('textarea');
+            tempInput.value = codeText;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            showNotification('Código copiado com sucesso!');
+        }
+
+        // Ação: Descarregar Ficheiro Vetorial SVG Original
+        function downloadSVG() {
+            const svgMarkup = SVG_TEMPLATES[currentIcon](currentBgColor, currentShape);
+            const blob = new Blob([svgMarkup], { type: 'image/svg+xml;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `favicon-aquidauana-${currentIcon}.svg`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            showNotification('O vetor .SVG de alta resolução foi guardado!');
+        }
+
+        // Ação: Renderizar SVG e converter em ficheiro PNG de qualquer tamanho
+        function downloadPNG(size) {
+            const svgElement = document.querySelector('#main-vector-preview svg');
+            const svgString = new XMLSerializer().serializeToString(svgElement);
+            
+            const svgBlob = new Blob([svgString], {type: 'image/svg+xml;charset=utf-8'});
+            const URL_API = window.URL || window.webkitURL || window;
+            const blobURL = URL_API.createObjectURL(svgBlob);
+            
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.getElementById('exportCanvas');
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+                
+                // Garantir limpeza total do canvas anterior
+                ctx.clearRect(0, 0, size, size);
+                
+                // Desenhar vetor escalado nativamente no tamanho pretendido
+                ctx.drawImage(img, 0, 0, size, size);
+                
+                // Trigger do Download de Imagem
+                const pngURL = canvas.toDataURL('image/png');
+                const downloadLink = document.createElement('a');
+                downloadLink.href = pngURL;
+                downloadLink.download = `favicon-aquidauana-${size}x${size}.png`;
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+                
+                showNotification(`Ícone PNG ${size}x${size} gerado!`);
+            };
+            img.src = blobURL;
+        }
+
+        // Inicialização ao carregar a página
+        window.onload = function() {
+            buildIconSelectorGrid();
+            renderAll();
+        };
+    </script>
+</body>
+</html>
