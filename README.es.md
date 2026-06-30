@@ -23,12 +23,12 @@ Este proyecto usa HTML, CSS y JavaScript puro. Los archivos están separados con
 |       |-- banner-pt.png
 |       |-- banner-en.png
 |       `-- banner-es.png
+|-- .gitignore
+|-- favicon.svg
 |-- index.html
 |-- src/
 |   |-- css/
 |   |   `-- style.css
-|   |-- data/
-|   |   `-- access.json
 |   `-- js/
 |       |-- model.js
 |       |-- view.js
@@ -53,7 +53,7 @@ No es necesario instalar dependencias, ejecutar build o configurar servidor.
 - `view.js`: actualiza la pantalla, muestra mensajes y hace las descargas.
 - `controller.js`: recibe los clics y conecta el Model con la View.
 - `counter.js`: cuenta accesos en el navegador con `localStorage`.
-- `access.json`: guarda la configuración inicial del contador.
+- `access.json`: archivo local ignorado por Git para no sobrescribir las views del servidor.
 - `index.html`: contiene la estructura de la página.
 - `style.css`: contiene los estilos del proyecto.
 
@@ -70,7 +70,9 @@ No es necesario instalar dependencias, ejecutar build o configurar servidor.
 
 ## Contador de accesos
 
-El contador usa `src/data/access.json` como configuración inicial y guarda las visitas en el `localStorage` del navegador en formato JSON.
+El contador intenta usar `src/data/access.json` como configuración local y guarda las visitas en el `localStorage` del navegador en formato JSON.
+
+El archivo `src/data/access.json` está en `.gitignore` para evitar sobrescribir las views actuales del servidor.
 
 Como el proyecto está hecho en HTML puro, no puede guardar datos en un JSON en el servidor. Por eso, el contador muestra los accesos de ese navegador. Para contar accesos reales de todos los visitantes, sería necesario usar una API, servicio externo o función serverless.
 

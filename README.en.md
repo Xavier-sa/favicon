@@ -23,12 +23,12 @@ This project uses plain HTML, CSS and JavaScript. The files are separated with a
 |       |-- banner-pt.png
 |       |-- banner-en.png
 |       `-- banner-es.png
+|-- .gitignore
+|-- favicon.svg
 |-- index.html
 |-- src/
 |   |-- css/
 |   |   `-- style.css
-|   |-- data/
-|   |   `-- access.json
 |   `-- js/
 |       |-- model.js
 |       |-- view.js
@@ -53,7 +53,7 @@ No dependencies, build step or local server are required.
 - `view.js`: updates the screen, shows messages and handles downloads.
 - `controller.js`: receives clicks and connects the Model with the View.
 - `counter.js`: counts visits in the browser with `localStorage`.
-- `access.json`: stores the initial counter settings.
+- `access.json`: local file ignored by Git to avoid overwriting server views.
 - `index.html`: contains the page structure.
 - `style.css`: contains the project styles.
 
@@ -70,7 +70,9 @@ No dependencies, build step or local server are required.
 
 ## Access counter
 
-The counter uses `src/data/access.json` as initial configuration and saves visits in the browser `localStorage` as JSON.
+The counter tries to use `src/data/access.json` as local configuration and saves visits in the browser `localStorage` as JSON.
+
+The `src/data/access.json` file is in `.gitignore` to avoid overwriting the current server views.
 
 Because this is a plain HTML project, it cannot write data back to a JSON file on the server. So the counter shows visits from that browser only. To count real visits from all users, an API, external service or serverless function would be required.
 
